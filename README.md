@@ -146,10 +146,24 @@ npm run dev
 
 ## Bootstrap With NPX
 
-Use this command to create a fresh Nest starter app via NPX:
+Use this command to scaffold a new project from this starter:
 
 ```bash
-npx @nestjs/cli new nest-fastify-app --package-manager npm
+npx create-nest-fastify-app my-api
+```
+
+For package owner (one-time setup before global NPX usage):
+
+```bash
+npm login
+npm publish --access public
+```
+
+Local test without publishing:
+
+```bash
+npm link
+npx create-nest-fastify-app my-api
 ```
 
 ## Starter cURL Commands

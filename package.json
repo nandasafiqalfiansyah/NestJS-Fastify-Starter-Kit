@@ -1,10 +1,13 @@
 {
-  "name": "nest-fastify-app",
+  "name": "create-nest-fastify-app",
   "version": "0.0.1",
-  "description": "",
+  "description": "Scaffold a NestJS + Fastify starter project",
   "author": "Nanda",
-  "private": true,
+  "private": false,
   "license": "MIT",
+  "bin": {
+    "create-nest-fastify-app": "bin/create-nest-fastify-app.js"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
