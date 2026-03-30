@@ -2,6 +2,17 @@
 
 Backend starter kit built with NestJS and Fastify, designed for clean project bootstrap, consistent API responses, and scalable structure.
 
+![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black)
+![Vercel Support](https://img.shields.io/badge/Vercel-Supported-000000?logo=vercel&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+## Tags
+
+`nestjs` `fastify` `typescript` `swagger` `drizzle` `vercel` `starter-kit` `api-template` `clean-architecture` `best-practices`
+
 ## Bootstrap With NPX
 
 Use this command to scaffold a new project from this starter:
@@ -23,17 +34,6 @@ Local test without publishing:
 npm link
 npx create-nest-fastify-app my-api
 ```
-
-![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
-![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black)
-![Vercel Support](https://img.shields.io/badge/Vercel-Supported-000000?logo=vercel&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue)
-
-## Tags
-
-`nestjs` `fastify` `typescript` `swagger` `drizzle` `vercel` `starter-kit` `api-template` `clean-architecture`
 
 ## Why This Starter
 
