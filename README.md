@@ -1,37 +1,105 @@
 # NestJS Fastify Starter Kit
 
-Starter kit backend berbasis NestJS dan Fastify, dirancang untuk memulai API project dengan struktur yang clean, konsisten, dan mudah dikembangkan.
+Backend starter kit built with NestJS and Fastify, designed for clean project bootstrap, consistent API responses, and scalable structure.
+
+![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black)
+![Vercel Support](https://img.shields.io/badge/Vercel-Supported-000000?logo=vercel&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+## Tags
+
+`nestjs` `fastify` `typescript` `swagger` `drizzle` `vercel` `starter-kit` `api-template` `clean-architecture`
 
 ## Why This Starter
 
-- Fast startup dengan Fastify
-- Struktur dasar production-ready
-- Konfigurasi environment terpusat
-- Swagger untuk dokumentasi API
-- Pondasi response dan error format yang konsisten
-- Fleksibel untuk multi database
+- High-performance HTTP engine with Fastify
+- Structured and production-ready NestJS module layout
+- Centralized response templates for success and error payloads
+- Unified exception handling for predictable API contracts
+- Flexible multi-database configuration strategy
+- Built-in API documentation via Swagger
 
-## Core Features
+## Feature Snapshot
 
-- NestJS 11 + Fastify adapter
-- Swagger docs di `/docs`
-- Global config via `@nestjs/config`
-- Drizzle ORM untuk SQL database
-- Multi database config: PostgreSQL, MySQL, SQLite
-- NoSQL mode pada konfigurasi (provider terpisah dari Drizzle)
-- Global response interceptor
-- Global exception filter
-- Global request validation pipe
-- Health check endpoint di `/health`
+| Category     | What You Get                                   |
+| ------------ | ---------------------------------------------- |
+| Runtime      | NestJS 11 + Fastify adapter                    |
+| API Docs     | Swagger UI at `/docs`                          |
+| Config       | Environment-based app and DB config            |
+| Data Layer   | Drizzle provider with SQL/NoSQL mode support   |
+| API Contract | Global response interceptor + exception filter |
+| Validation   | Global request validation pipe                 |
+| Monitoring   | Health endpoint at `/health`                   |
+
+## Architecture Flow
+
+```mermaid
+flowchart LR
+    C[Client] --> F[Fastify Server]
+    F --> N[Nest Application]
+    N --> P[Global RequestValidationPipe]
+    P --> R[Controller Route]
+    R --> S[Service Layer]
+    S --> DB[(Database Provider)]
+    S --> I[ResponseInterceptor]
+    I --> O[Standard Success Envelope]
+    R --> E[HttpExceptionFilter]
+    E --> X[Standard Error Envelope]
+```
+
+## Request Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API (Fastify + Nest)
+    participant C as Controller
+    participant S as Service
+    participant I as Interceptor
+    participant F as Exception Filter
+
+    U->>A: HTTP Request
+    A->>C: Route Resolution
+    C->>S: Execute Business Logic
+    S-->>C: Return Data
+    C->>I: Success Response
+    I-->>U: Standard Success Payload
+
+    C-->>F: Throw Error (if any)
+    F-->>U: Standard Error Payload
+```
+
+## Error Handling Flow (400 / 404 / 500)
+
+```mermaid
+flowchart TD
+    A[Incoming Request] --> B{Valid Route?}
+    B -- No --> N404[404 Not Found]
+    B -- Yes --> C{Valid Request Body?}
+    C -- No --> E400[400 Bad Request]
+    C -- Yes --> D{Unhandled Exception?}
+    D -- Yes --> E500[500 Internal Server Error]
+    D -- No --> OK[200/201 Success]
+
+    N404 --> OUT[Error Response Template]
+    E400 --> OUT
+    E500 --> OUT
+```
 
 ## Project Structure
 
 ```text
 src/
   common/
-    filters/http-exception.filter.ts
-    interceptors/response.interceptor.ts
-    pipes/request-validation.pipe.ts
+    filters/
+      http-exception.filter.ts
+    interceptors/
+      response.interceptor.ts
+    pipes/
+      request-validation.pipe.ts
   database/
     database.config.ts
     database.module.ts
@@ -40,6 +108,10 @@ src/
   health/
     health.controller.ts
     health.module.ts
+  utils/
+    response/
+      index.ts
+      response-template.util.ts
   app.controller.ts
   app.module.ts
   app.service.ts
@@ -48,33 +120,51 @@ src/
 
 ## Quick Start
 
-1. Install dependencies
+1. Install dependencies.
 
 ```bash
 npm install
 ```
 
-2. Create local environment file
+2. Create a local environment file.
 
 ```bash
 cp .env.example .env
 ```
 
-3. Run development server
+3. Run development mode.
 
 ```bash
 npm run dev
 ```
 
-4. Open service endpoints
+4. Open endpoints.
 
-- API root: `http://localhost:3000/`
+- API Root: `http://localhost:3000/`
 - Swagger: `http://localhost:3000/docs`
-- Health check: `http://localhost:3000/health`
+- Health: `http://localhost:3000/health`
+
+## Bootstrap With NPX
+
+Use this command to create a fresh Nest starter app via NPX:
+
+```bash
+npx @nestjs/cli new nest-fastify-app --package-manager npm
+```
+
+## Starter cURL Commands
+
+Quick smoke tests after running the server:
+
+```bash
+curl -X GET http://localhost:3000/
+curl -X GET http://localhost:3000/health
+curl -X GET http://localhost:3000/not-found
+```
 
 ## Environment Variables
 
-Semua contoh tersedia di `.env.example`.
+See `.env.example` for complete values.
 
 ### App
 
@@ -108,7 +198,7 @@ Semua contoh tersedia di `.env.example`.
 - `NOSQL_URI`
 - `NOSQL_DATABASE`
 
-## Database Examples
+## Database Configuration Examples
 
 PostgreSQL:
 
@@ -139,7 +229,7 @@ DB_CLIENT=sqlite
 DB_SQLITE_FILE=./data/app.db
 ```
 
-NoSQL mode:
+NoSQL Mode:
 
 ```env
 DB_CLIENT=nosql
@@ -148,40 +238,57 @@ NOSQL_URI=mongodb://localhost:27017
 NOSQL_DATABASE=app_nosql_db
 ```
 
-## Available Scripts
+## API Response Templates
 
-- `npm run dev` run watch mode
-- `npm run build` compile to `dist`
-- `npm run start` run app normally
-- `npm run start:debug` run debug mode
-- `npm run start:prod` run compiled app
-- `npm run lint` run lint autofix
-- `npm run test` run unit tests
-- `npm run test:e2e` run e2e tests
-
-## API Response Convention
-
-Success response dibungkus oleh interceptor dalam bentuk:
+Success payload:
 
 ```json
 {
   "success": true,
-  "path": "/endpoint",
-  "timestamp": "2026-03-29T10:00:00.000Z",
-  "data": {}
+  "statusCode": 200,
+  "message": "OK",
+  "path": "/health",
+  "data": {
+    "status": "ok"
+  }
 }
 ```
 
-Error response dibentuk oleh global exception filter agar konsisten.
+Error payload:
 
-## Notes
-
-Beberapa dependency Nest CLI lama masih memiliki peer dependency lawas. Saat menambah package baru, gunakan:
-
-```bash
-npm install <package-name> --legacy-peer-deps
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Cannot GET /unknown-route",
+  "error": {
+    "message": "Cannot GET /unknown-route",
+    "error": "Not Found",
+    "statusCode": 404
+  },
+  "path": "/unknown-route"
+}
 ```
+
+## Available Scripts
+
+- `npm run dev` Start in watch mode
+- `npm run build` Build to `dist`
+- `npm run start` Start app
+- `npm run start:debug` Start app in debug mode
+- `npm run start:prod` Run compiled output
+- `npm run lint` Run ESLint with autofix
+- `npm run test` Run unit tests
+- `npm run test:e2e` Run e2e tests
+
+## Deployment Notes (Vercel)
+
+- Keep Swagger assets stable in production with CDN URLs.
+- Use relative OpenAPI URL for docs route compatibility.
+- Ensure the latest commit is deployed before testing `/docs`.
 
 ## License
 
-UNLICENSED
+MIT License
+
+Copyright (c) 2026 Nanda
