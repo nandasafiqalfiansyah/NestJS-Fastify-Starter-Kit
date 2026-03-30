@@ -21,7 +21,19 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, swaggerDocument);
+  SwaggerModule.setup('docs', app, swaggerDocument, {
+    // Use a relative URL so Swagger UI still works when deployed behind subpaths.
+    jsonDocumentUrl: 'docs/json',
+    swaggerOptions: {
+      url: './json',
+    },
+    customCssUrl:
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css',
+    customJs: [
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js',
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js',
+    ],
+  });
 
   app.useGlobalPipes(new RequestValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor());

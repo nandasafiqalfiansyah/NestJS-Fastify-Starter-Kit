@@ -5,33 +5,40 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
-import { FastifyRequest } from 'fastify';
-
-type ApiEnvelope<T> = {
-  success: true;
-  path: string;
-  timestamp: string;
-  data: T;
-};
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { ApiSuccessResponse, buildSuccessResponse } from '../../utils/response';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<
   T,
-  ApiEnvelope<T>
+  ApiSuccessResponse<T>
 > {
   intercept(
     context: ExecutionContext,
     next: CallHandler<T>,
-  ): Observable<ApiEnvelope<T>> {
-    const request = context.switchToHttp().getRequest<FastifyRequest>();
+  ): Observable<ApiSuccessResponse<T>> {
+    const httpContext = context.switchToHttp();
+    const request = httpContext.getRequest<FastifyRequest>();
+    const reply = httpContext.getResponse<FastifyReply>();
+    const route = request.url;
+
+    // Swagger UI/spec endpoints must return raw responses.
+    if (
+      route.startsWith('/docs') ||
+      route.startsWith('/docs-json') ||
+      route.startsWith('/docs-yaml')
+    ) {
+      return next.handle() as Observable<ApiSuccessResponse<T>>;
+    }
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        path: request.url,
-        timestamp: new Date().toISOString(),
-        data,
-      })),
+      map((data) =>
+        buildSuccessResponse({
+          data,
+          path: route,
+          statusCode: reply.statusCode,
+        }),
+      ),
     );
   }
 }

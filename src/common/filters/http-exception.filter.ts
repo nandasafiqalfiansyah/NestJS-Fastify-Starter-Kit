@@ -6,6 +6,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { buildErrorResponse, getStatusMessage } from '../../utils/response';
+
+type HttpExceptionPayload = {
+  message?: string | string[];
+  error?: string;
+  [key: string]: unknown;
+};
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -22,19 +29,47 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const exceptionResponse =
       exception instanceof HttpException ? exception.getResponse() : null;
 
-    reply.status(status).send({
-      success: false,
-      statusCode: status,
-      message:
-        typeof exceptionResponse === 'string'
-          ? exceptionResponse
-          : 'Internal server error',
-      error:
-        typeof exceptionResponse === 'object' && exceptionResponse !== null
-          ? exceptionResponse
-          : undefined,
-      path: request.url,
-      timestamp: new Date().toISOString(),
-    });
+    const message = this.resolveErrorMessage(exceptionResponse, status);
+
+    const errorDetail =
+      typeof exceptionResponse === 'object' && exceptionResponse !== null
+        ? exceptionResponse
+        : undefined;
+
+    reply.status(status).send(
+      buildErrorResponse({
+        statusCode: status,
+        path: request.url,
+        message,
+        error: errorDetail,
+      }),
+    );
+  }
+
+  private resolveErrorMessage(
+    exceptionResponse: unknown,
+    status: number,
+  ): string {
+    if (typeof exceptionResponse === 'string') {
+      return exceptionResponse;
+    }
+
+    if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+      const payload = exceptionResponse as HttpExceptionPayload;
+
+      if (Array.isArray(payload.message)) {
+        return payload.message.join(', ');
+      }
+
+      if (typeof payload.message === 'string' && payload.message.length > 0) {
+        return payload.message;
+      }
+
+      if (typeof payload.error === 'string' && payload.error.length > 0) {
+        return payload.error;
+      }
+    }
+
+    return getStatusMessage(status);
   }
 }

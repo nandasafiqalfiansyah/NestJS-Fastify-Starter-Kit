@@ -7,7 +7,6 @@ export class HealthController {
     return {
       status: 'ok',
       uptimeSeconds: Math.floor(process.uptime()),
-      timestamp: new Date().toISOString(),
     };
   }
 }
