@@ -2,6 +2,28 @@
 
 Backend starter kit built with NestJS and Fastify, designed for clean project bootstrap, consistent API responses, and scalable structure.
 
+## Bootstrap With NPX
+
+Use this command to scaffold a new project from this starter:
+
+```bash
+npx create-nest-fastify-app my-api
+```
+
+For package owner (one-time setup before global NPX usage):
+
+```bash
+npm login
+npm publish --access public
+```
+
+Local test without publishing:
+
+```bash
+npm link
+npx create-nest-fastify-app my-api
+```
+
 ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
 ![Fastify](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -143,28 +165,6 @@ npm run dev
 - API Root: `http://localhost:3000/`
 - Swagger: `http://localhost:3000/docs`
 - Health: `http://localhost:3000/health`
-
-## Bootstrap With NPX
-
-Use this command to scaffold a new project from this starter:
-
-```bash
-npx create-nest-fastify-app my-api
-```
-
-For package owner (one-time setup before global NPX usage):
-
-```bash
-npm login
-npm publish --access public
-```
-
-Local test without publishing:
-
-```bash
-npm link
-npx create-nest-fastify-app my-api
-```
 
 ## Starter cURL Commands
 
